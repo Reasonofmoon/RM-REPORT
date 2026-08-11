@@ -1,0 +1,31 @@
+# deps / build
+node_modules/
+dist/
+.vite/
+*.local
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# temp / extract
+tmp_hwpx/
+tmp_extract_hwpx.py
+tmp_ref.*
+_workspace/
+_workspace_*/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+
+# python
+*.pyc
+__pycache__/
+
+# vendor nested git / large clones (optional reference only)
+_vendor/
