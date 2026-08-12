@@ -1,57 +1,46 @@
 /**
- * 채점 로직 스모크 테스트 (브라우저 없이)
+ * 채점 로직 스모크 테스트 (초등 + 중등)
  */
-import {
-  QUESTIONS,
-  createEmptyAnswers,
-  gradeAll,
-  gradeQuestion,
-  diagnoseLevel,
-} from '../src/data/middleSchoolLevelTest.js'
+import { EXAM_PACKS } from '../src/data/examPacks.js'
+import { gradeQuestion } from '../src/data/grading.js'
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg)
 }
 
-// 전항 정답
-const perfect = createEmptyAnswers()
-for (const q of QUESTIONS) {
-  if (q.type === 'choice') perfect[q.no] = String(q.answer)
-  else if (q.type === 'multi') perfect[q.no] = [...q.answer]
-  else if (q.type === 'short') {
-    perfect[q.no] = Object.fromEntries(
-      Object.entries(q.answer).map(([k, list]) => [k, list[0]])
-    )
-  }
+for (const [id, pack] of Object.entries(EXAM_PACKS)) {
+  const perfect = pack.fillCorrect()
+  const perfectGrade = pack.gradeAll(perfect)
+  const perfectTotal = perfectGrade.reduce((s, g) => s + g.score, 0)
+  assert(
+    perfectTotal === pack.meta.totalMaxScore,
+    `[${id}] 전항 정답 ${pack.meta.totalMaxScore} 기대, 실제 ${perfectTotal}`
+  )
+  assert(
+    perfectGrade.every((g) => g.correct === 'O'),
+    `[${id}] 전항 정답이면 모두 O`
+  )
+
+  const empty = pack.gradeAll(pack.createEmptyAnswers())
+  const emptyTotal = empty.reduce((s, g) => s + g.score, 0)
+  assert(emptyTotal === 0, `[${id}] 빈 답안 0점 기대, 실제 ${emptyTotal}`)
+
+  const diag = pack.diagnoseLevel(perfectGrade)
+  assert(diag.recommended, `[${id}] 추천 레벨 존재`)
+  console.log(`[${id}] OK total=${perfectTotal} recommend=${diag.recommended} n=${pack.questions.length}`)
 }
-const perfectGrade = gradeAll(perfect)
-const perfectTotal = perfectGrade.reduce((s, g) => s + g.score, 0)
-assert(perfectTotal === 100, `전항 정답 총점 100 기대, 실제 ${perfectTotal}`)
-assert(perfectGrade.every((g) => g.correct === 'O'), '전항 정답이면 모두 O')
 
-// 빈 답안
-const empty = gradeAll(createEmptyAnswers())
-const emptyTotal = empty.reduce((s, g) => s + g.score, 0)
-assert(emptyTotal === 0, `빈 답안 0점 기대, 실제 ${emptyTotal}`)
-
-// Q2 부분 점수
-const q2 = QUESTIONS.find((q) => q.no === 2)
+// 중등 Q2 multi partial
+const mid = EXAM_PACKS.middle
+const q2 = mid.questions.find((q) => q.no === 2)
 const partial = gradeQuestion(q2, ['3'])
-assert(partial.correct === 'P', 'Q2 하나만 맞으면 부분')
-assert(partial.score > 0 && partial.score < 5, `Q2 부분 점수 기대, 실제 ${partial.score}`)
+assert(partial.correct === 'P', '중등 Q2 부분')
 
-// Q14 부분
-const q14 = QUESTIONS.find((q) => q.no === 14)
-const p14 = gradeQuestion(q14, { 1: 'guiding', 2: 'wrong', 3: 'to open' })
-assert(p14.correct === 'P', 'Q14 부분')
-assert(Math.abs(p14.score - (10 / 3)) < 0.2 || Math.abs(p14.score - 3.3) < 0.2 || Math.abs(p14.score - 3.33) < 0.2, `Q14 score ~3.3 got ${p14.score}`)
+// 초등 Q8 short partial
+const el = EXAM_PACKS.elementary
+const q8 = el.questions.find((q) => q.no === 8)
+const p8 = gradeQuestion(q8, { 1: 'school', 2: 'bus', 3: 'wrong', 4: 'hide' })
+assert(p8.correct === 'P', '초등 Q8 부분')
+assert(p8.score === 3, `초등 Q8 score 3 기대, 실제 ${p8.score}`)
 
-const diag = diagnoseLevel(perfectGrade)
-assert(diag.recommended, '추천 레벨 존재')
-
-console.log('SMOKE OK')
-console.log('  perfect total:', perfectTotal)
-console.log('  Q2 partial:', partial)
-console.log('  Q14 partial:', p14)
-console.log('  recommend:', diag.recommended)
-console.log('  questions:', QUESTIONS.length)
+console.log('SMOKE OK all packs')

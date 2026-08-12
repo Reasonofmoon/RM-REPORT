@@ -19,7 +19,6 @@ import html2canvas from 'html2canvas'
 import { Button } from '@/components/ui/button.jsx'
 import { Download, FileText, Loader2, RefreshCw, Sparkles } from 'lucide-react'
 import { AIFeedbackService, generateDefaultFeedback } from '@/utils/aiService.js'
-import { diagnoseLevel } from '@/data/middleSchoolLevelTest.js'
 import { getProviderConfig } from '@/utils/aiModels.js'
 import '@/styles/report-studio.css'
 
@@ -112,6 +111,8 @@ const ReportCard = ({
   apiKey,
   provider = 'openai',
   aiMode = true,
+  levelDiagnosis: levelDiagnosisProp,
+  subjectLabel = '영어',
 }) => {
   const reportRef = useRef(null)
   const [feedback, setFeedback] = useState(null)
@@ -120,7 +121,10 @@ const ReportCard = ({
   const providerCfg = getProviderConfig(provider)
 
   const analysis = useMemo(() => analyzeGradeData(gradeData), [gradeData])
-  const levelDiagnosis = useMemo(() => diagnoseLevel(gradeData), [gradeData])
+  const levelDiagnosis = levelDiagnosisProp || {
+    rates: [],
+    recommended: '-',
+  }
   const band = useMemo(() => computeBand(analysis.percentage), [analysis.percentage])
 
   const generateAIFeedback = async () => {
@@ -266,7 +270,7 @@ const ReportCard = ({
         <span className="title-mark" />
         <div>
           <p>{subtitle}</p>
-          <h2>영어 성적 리포트</h2>
+          <h2>{subjectLabel} 성적 리포트</h2>
         </div>
       </div>
       <div className="report-brand">

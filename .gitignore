@@ -11,6 +11,7 @@ dist/
 
 # temp / extract
 tmp_hwpx/
+tmp_elem/
 tmp_extract_hwpx.py
 tmp_ref.*
 _workspace/
@@ -29,3 +30,6 @@ __pycache__/
 
 # vendor nested git / large clones (optional reference only)
 _vendor/
+
+source/*.hwp
+
