@@ -6,8 +6,8 @@
 
 export const TEST_META = {
   id: 'elementary-reading-level-test-v1',
-  name: '초등 Reading Level Test',
-  description: 'AR 1.5~4.3 초등 읽기 진단 25문항',
+  name: '초등 레벨테스트',
+  description: 'AR 1.5~4.3 초등 읽기 진단 25문항 (Reading Level Test)',
   totalQuestions: 25,
   totalMaxScore: 100,
   subject: '영어 읽기',

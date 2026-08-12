@@ -285,7 +285,9 @@ const ReportCard = ({
 
   const ReportFooter = () => (
     <footer className="report-footer">
-      <span>READMASTER · 중등 영어 레벨테스트</span>
+      <span>
+        READMASTER · {studentInfo.testName || subjectLabel || '레벨테스트'}
+      </span>
       <span>
         템플릿 스타일: grade-report-studio 기반 · {studentInfo.testDate || ''}
       </span>
