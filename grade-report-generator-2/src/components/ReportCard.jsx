@@ -37,7 +37,7 @@ ChartJS.register(
 )
 
 function analyzeGradeData(data) {
-  const totalScore = data.reduce((sum, item) => sum + item.score, 0)
+  const totalScore = Math.round(data.reduce((sum, item) => sum + item.score, 0) * 10) / 10
   const totalMaxScore = data.reduce((sum, item) => sum + item.maxScore, 0)
   const percentage = totalMaxScore > 0 ? Math.round((totalScore / totalMaxScore) * 1000) / 10 : 0
 
@@ -49,7 +49,8 @@ function analyzeGradeData(data) {
   })
 
   const areaRows = Object.keys(areaAnalysis).map((area) => {
-    const { score, maxScore } = areaAnalysis[area]
+    const score = Math.round(areaAnalysis[area].score * 10) / 10
+    const { maxScore } = areaAnalysis[area]
     const rate = maxScore > 0 ? (score / maxScore) * 100 : 0
     // 기준 평균(클래스 평균 대용): 목표 70%
     const avgRate = 70

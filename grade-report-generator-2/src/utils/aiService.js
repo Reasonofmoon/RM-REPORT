@@ -1,7 +1,7 @@
 import { getProviderConfig, resolveApiKey } from './aiModels.js'
 
 const SYSTEM_PROMPT =
-  '당신은 중등 영어 교육 전문가입니다. 진단 결과를 바탕으로 구체적이고 실행 가능한 피드백을 JSON으로만 제공합니다. 마크다운 코드펜스 없이 순수 JSON 객체만 출력하세요.'
+  '당신은 초·중등 영어 읽기 및 진단평가 교육 전문가입니다. 진단 결과를 바탕으로 구체적이고 실행 가능한 피드백을 JSON으로만 제공합니다. 마크다운 코드펜스 없이 순수 JSON 객체만 출력하세요.'
 
 /**
  * AI 피드백 생성 서비스
@@ -76,7 +76,7 @@ export class AIFeedbackService {
       .map((r) => `${r.level}: ${Math.round(r.rate * 100)}% (${r.score}/${r.max})`)
       .join(', ')
 
-    return `당신은 중등 영어 진단평가 전문 교사입니다. 아래 레벨테스트 결과를 분석해 개인화된 피드백을 JSON으로 작성하세요.
+    return `당신은 초·중등 영어 읽기 및 진단평가 전문 교사입니다. 아래 레벨테스트 결과를 분석해 개인화된 피드백을 JSON으로 작성하세요.
 
 **학생 정보:**
 - 이름: ${studentInfo.name}

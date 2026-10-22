@@ -96,7 +96,7 @@ function App() {
   const aiReady = apiSettings.aiMode && Boolean(resolvedKey)
 
   const liveGrade = useMemo(() => pack.gradeAll(answers), [pack, answers])
-  const liveTotal = liveGrade.reduce((s, g) => s + g.score, 0)
+  const liveTotal = Math.round(liveGrade.reduce((s, g) => s + g.score, 0) * 10) / 10
   const liveMax = liveGrade.reduce((s, g) => s + g.maxScore, 0)
   const levelDiagnosis = useMemo(
     () => (gradeData ? pack.diagnoseLevel(gradeData) : pack.diagnoseLevel(liveGrade)),
@@ -424,7 +424,21 @@ function App() {
                       {q.type === 'choice' && (
                         <div className="flex flex-wrap gap-2">
                           {(q.choices || []).map((label) => {
-                            const selected = String(answers[q.no]).toUpperCase() === String(label).toUpperCase()
+                            const normAns = String(answers[q.no] || '')
+                              .replace(/①/g, '1')
+                              .replace(/②/g, '2')
+                              .replace(/③/g, '3')
+                              .replace(/④/g, '4')
+                              .replace(/⑤/g, '5')
+                              .toUpperCase()
+                            const normLabel = String(label || '')
+                              .replace(/①/g, '1')
+                              .replace(/②/g, '2')
+                              .replace(/③/g, '3')
+                              .replace(/④/g, '4')
+                              .replace(/⑤/g, '5')
+                              .toUpperCase()
+                            const selected = normAns !== '' && normAns === normLabel
                             return (
                               <button
                                 key={label}
@@ -448,7 +462,22 @@ function App() {
                           <p className="text-xs text-amber-700 mb-2">복수 선택</p>
                           <div className="flex flex-wrap gap-2">
                             {(q.choices || []).map((label) => {
-                              const selected = (answers[q.no] || []).map(String).includes(String(label))
+                              const normLabel = String(label || '')
+                                .replace(/①/g, '1')
+                                .replace(/②/g, '2')
+                                .replace(/③/g, '3')
+                                .replace(/④/g, '4')
+                                .replace(/⑤/g, '5')
+                              const selected = (answers[q.no] || [])
+                                .map((v) =>
+                                  String(v)
+                                    .replace(/①/g, '1')
+                                    .replace(/②/g, '2')
+                                    .replace(/③/g, '3')
+                                    .replace(/④/g, '4')
+                                    .replace(/⑤/g, '5')
+                                )
+                                .includes(normLabel)
                               return (
                                 <button
                                   key={label}
